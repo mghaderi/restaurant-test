@@ -3,6 +3,7 @@
 namespace App\Domains\Order\Models;
 
 use App\Domains\Auth\Models\User;
+use App\Domains\Transport\Models\Trip;
 use App\Domains\Vendor\Models\Vendor;
 use Database\Factories\Order\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

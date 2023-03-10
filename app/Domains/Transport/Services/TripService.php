@@ -2,6 +2,7 @@
 
 namespace App\Domains\Transport\Services;
 
+use App\Domains\Order\Models\Order;
 use App\Domains\Transport\Models\Trip;
 
 class TripService
@@ -43,5 +44,34 @@ class TripService
             self::STATUS_AT_VENDOR => self::STATUS_AT_VENDOR,
             self::STATUS_PICKED => self::STATUS_PICKED
         ];
+    }
+
+    public function fetchData(): array
+    {
+        if (empty($this->model)) {
+            return [];
+        }
+        $transporterService = new TransporterService($this->model->transporter);
+        $transporterData = $transporterService->fetchData();
+        if (!empty($transporterData)) {
+            return [
+                'status' => $this->model->status,
+                'trasnporter' => $transporterData
+            ];
+        }
+        return [
+            'status' => $this->model->status
+        ];
+    }
+
+    public function checkForDelay()
+    {
+        if (empty($this->model)) {
+            return true;
+        }
+        if ($this->model->status == self::STATUS_DELIVERED) {
+            return true;
+        }
+        return false;
     }
 }
