@@ -1,24 +1,24 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Auth;
 
+use App\Domains\Auth\Models\User;
+use App\Domains\Auth\Services\UserService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domains\Auth\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = User::class;
+
     public function definition(): array
     {
         return [
             'name' => fake()->name(),
+            'type' => fake()->randomElement((new UserService())->types()),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
@@ -33,6 +33,20 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function customer(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => UserService::TYPE_CUSTOMER,
+        ]);
+    }
+
+    public function employee(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => UserService::TYPE_EMPLOYEE,
         ]);
     }
 }
