@@ -2,6 +2,8 @@
 
 namespace App\Domains\Order\Http\Controllers;
 
+use App\Domains\Auth\Services\UserService;
+use App\Domains\Order\Http\Requests\AssignRequest;
 use App\Domains\Order\Http\Requests\DelayRequest;
 use App\Domains\Order\Services\DelayOrderService;
 use App\Domains\Order\Services\DelayReportService;
@@ -29,6 +31,17 @@ class OrderController
             $delayReportService->addOrderToDelayReport($orderService->fetch(), false);
         }
         DB::commit();
+        $orderService = new OrderService($request->input('order_id'));
+        return (new BasicResponse)->ok($orderService->fetchData());
+    }
+
+    public function assign(AssignRequest $request)
+    {
+        $orderService = new DelayOrderService();
+        $orderService->assignOrderToEmployee(
+            (new OrderService($request->input('order_id')))->fetch(),
+            (new UserService())->fetchEmployee($request->input('employee_id'))
+        );
         $orderService = new OrderService($request->input('order_id'));
         return (new BasicResponse)->ok($orderService->fetchData());
     }

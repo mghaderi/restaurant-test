@@ -3,12 +3,10 @@
 namespace App\Domains\Order\Models;
 
 use App\Domains\Auth\Models\User;
-use App\Domains\Vendor\Models\Vendor;
 use Database\Factories\Order\DelayOrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DelayOrder extends Model
 {

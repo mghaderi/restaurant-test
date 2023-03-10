@@ -3,6 +3,7 @@
 namespace App\Domains\Auth\Services;
 
 use App\Domains\Auth\Models\User;
+use App\Http\Responses\BasicResponse;
 
 class UserService
 {
@@ -23,5 +24,16 @@ class UserService
             self::TYPE_CUSTOMER => self::TYPE_CUSTOMER,
             self::TYPE_EMPLOYEE => self::TYPE_EMPLOYEE,
         ];
+    }
+
+    public function fetchEmployee(int $employeeId): User
+    {
+        $employee = User::where('id', $employeeId)
+            ->where('type', UserService::TYPE_EMPLOYEE)
+            ->first();
+        if (empty($employee)) {
+            (new BasicResponse)->notFoundError('can not find employee.');
+        }
+        return $employee;
     }
 }
