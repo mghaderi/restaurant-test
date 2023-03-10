@@ -45,16 +45,15 @@ class OrderController
         return (new BasicResponse)->ok($orderService->fetchData());
     }
 
-    public function updateAssign(AssignRequest $request)
+    public function resolve(AssignRequest $request)
     {
         $orderService = new DelayOrderService();
         DB::beginTransaction();
-        $orderService->updateAssignOrderToEmployee(
-            (new OrderService($request->input('order_id')))->fetch(),
+        $order = $orderService->resolveOrderWithEmployee(
             (new UserService())->fetchEmployee($request->input('employee_id'))
         );
         DB::commit();
-        $orderService = new OrderService($request->input('order_id'));
+        $orderService = new OrderService($order->id);
         return (new BasicResponse)->ok($orderService->fetchData());
     }
 }

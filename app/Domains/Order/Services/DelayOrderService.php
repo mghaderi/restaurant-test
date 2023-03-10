@@ -93,16 +93,17 @@ class DelayOrderService
         (new BasicResponse)->error('can not save delay for order');
     }
 
-    public function updateAssignOrderToEmployee(Order $order, User $employee): void
+    public function resolveOrderWithEmployee(User $employee): Order
     {
-        $delayOrder = DelayOrder::where('order_id', $order->id)
-            ->where('employee_id', $employee->id)
+        $delayOrder = DelayOrder::where('employee_id', $employee->id)
             ->first();
         if (empty($delayOrder)) {
-            (new BasicResponse())->notFoundError('can not find order with delay, which assigned to this employee.');
+            (new BasicResponse())->notFoundError('employee does not have any delay order.');
         }
+        $order = $delayOrder->order;
         if (!$delayOrder->delete()) {
-            (new BasicResponse())->error('can not update delay of this order');
+            (new BasicResponse())->error('can not resolve delay of for this employee');
         }
+        return $order;
     }
 }
