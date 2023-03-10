@@ -25,8 +25,8 @@ class OrderController
             $delayReportService->addOrderToDelayReport($orderService->fetch(), true);
             $delayOrderService->addOrderToDelayOrder($orderService->fetch());
         } elseif ($orderService->checkForReport()) {
-            $delayReportService->addOrderToDelayReport($orderService->fetch(), false);
             $orderService->extendDeliveryTime();
+            $delayReportService->addOrderToDelayReport($orderService->fetch(), false);
         }
         DB::commit();
         $orderService = new OrderService($request->input('order_id'));
