@@ -37,11 +37,23 @@ class OrderController
 
     public function assign(AssignRequest $request)
     {
+        $delayOrderService = new DelayOrderService();
+        $delayOrder = $delayOrderService->assignOrderToEmployee(
+            (new UserService())->fetchEmployee($request->input('employee_id'))
+        );
+        $orderService = new OrderService($delayOrder->order_id);
+        return (new BasicResponse)->ok($orderService->fetchData());
+    }
+
+    public function updateAssign(AssignRequest $request)
+    {
         $orderService = new DelayOrderService();
-        $orderService->assignOrderToEmployee(
+        DB::beginTransaction();
+        $orderService->updateAssignOrderToEmployee(
             (new OrderService($request->input('order_id')))->fetch(),
             (new UserService())->fetchEmployee($request->input('employee_id'))
         );
+        DB::commit();
         $orderService = new OrderService($request->input('order_id'));
         return (new BasicResponse)->ok($orderService->fetchData());
     }

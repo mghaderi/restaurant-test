@@ -12,4 +12,6 @@ Route::group(['as' => 'order.', 'prefix' => 'order'], function () {
         ->name('delay');
     Route::post('/assign', [OrderController::class, 'assign'])
         ->name('assign');
+    Route::patch('/assign', [OrderController::class, 'updateAssign'])
+        ->name('update-assign');
 });

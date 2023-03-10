@@ -3,11 +3,9 @@
 namespace App\Domains\Order\Services;
 
 use App\Domains\Auth\Models\User;
-use App\Domains\Auth\Services\UserService;
 use App\Domains\Order\Models\DelayOrder;
 use App\Domains\Order\Models\Order;
 use App\Http\Responses\BasicResponse;
-use Carbon\Carbon;
 
 class DelayOrderService
 {
@@ -68,32 +66,43 @@ class DelayOrderService
         (new BasicResponse)->error('can not save delay order');
     }
 
-    public function validationForAssignOrderToEmployee(Order $order, User $employee): DelayOrder
+    public function validationForAssignOrderToEmployee(User $employee): DelayOrder
     {
-        $delayOrder = DelayOrder::where('order_id', $order->id)
-            ->first();
-        if (empty($delayOrder)) {
-            (new BasicResponse())->notFoundError('can not found order in delay.');
-        }
-        if (!empty($delayOrder->employee_id)) {
-            (new BasicResponse())->validationError('order already assigned to employee id ' . $delayOrder->employee_id);
-        }
         $employeeDelayOrder = DelayOrder::where('employee_id', $employee->id)
             ->first();
         if (!empty($employeeDelayOrder)) {
             (new BasicResponse())->validationError('employee is busy with order id ' . $employeeDelayOrder->order_id);
         }
+        $delayOrder = DelayOrder::where('employee_id', null)
+            ->oldest()
+            ->first();
+        if (empty($delayOrder)) {
+            (new BasicResponse())->notFoundError('there is no orders with delay right now.');
+        }
         return $delayOrder;
     }
 
-    public function assignOrderToEmployee(Order $order, User $employee): DelayOrder
+    public function assignOrderToEmployee(User $employee): DelayOrder
     {
-        $delayOrder = $this->validationForAssignOrderToEmployee($order, $employee);
+        $delayOrder = $this->validationForAssignOrderToEmployee($employee);
         $delayOrder->employee_id = $employee->id;
         $delayOrder->status = self::STATUS_IN_PROGRESS;
         if ($delayOrder->save()) {
             return $delayOrder;
         }
         (new BasicResponse)->error('can not save delay for order');
+    }
+
+    public function updateAssignOrderToEmployee(Order $order, User $employee): void
+    {
+        $delayOrder = DelayOrder::where('order_id', $order->id)
+            ->where('employee_id', $employee->id)
+            ->first();
+        if (empty($delayOrder)) {
+            (new BasicResponse())->notFoundError('can not find order with delay, which assigned to this employee.');
+        }
+        if (!$delayOrder->delete()) {
+            (new BasicResponse())->error('can not update delay of this order');
+        }
     }
 }

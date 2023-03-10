@@ -57,6 +57,7 @@ class OrderService
 
     public function fetchData() {
         $response = [
+            'order_id' => $this->model->id,
             'delivery_time' => $this->deliveryTimeInCarbon()->format('Y/m/d H:i')
         ];
         $tripService = new TripService($this->model->trip);
