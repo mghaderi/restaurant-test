@@ -79,8 +79,9 @@ class OrderService
         if ($extraMinutes === '') {
             (new BasicResponse())->error('can not get extra time');
         }
+        $difference = now()->diffInMinutes($this->deliveryTimeInCarbon());
         $this->model->extra_time = empty($this->model->extra_time) ? 0 : $this->model->extra_time;
-        $this->model->extra_time = $this->model->extra_time + (int)$extraMinutes;
+        $this->model->extra_time = $this->model->extra_time + $difference + (int)$extraMinutes;
         $this->model->extra_attempts = empty($this->model->extra_attempts) ? 0 : $this->model->extra_attempts;
         $this->model->extra_attempts  = $this->model->extra_attempts + 1;
         if ($this->model->save()) {

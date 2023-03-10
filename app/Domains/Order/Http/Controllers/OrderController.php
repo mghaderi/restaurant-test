@@ -7,6 +7,7 @@ use App\Domains\Order\Services\DelayOrderService;
 use App\Domains\Order\Services\DelayReportService;
 use App\Domains\Order\Services\OrderService;
 use App\Http\Responses\BasicResponse;
+use Illuminate\Support\Facades\DB;
 
 class OrderController
 {
@@ -19,6 +20,7 @@ class OrderController
             $orderData = $orderService->fetchData();
             return (new BasicResponse)->ok($orderData);
         }
+        DB::beginTransaction();
         if ($orderService->checkForDelay()) {
             $delayReportService->addOrderToDelayReport($orderService->fetch(), true);
             $delayOrderService->addOrderToDelayOrder($orderService->fetch());
@@ -26,6 +28,7 @@ class OrderController
             $delayReportService->addOrderToDelayReport($orderService->fetch(), false);
             $orderService->extendDeliveryTime();
         }
+        DB::commit();
         $orderService = new OrderService($request->input('order_id'));
         return (new BasicResponse)->ok($orderService->fetchData());
     }
