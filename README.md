@@ -48,7 +48,7 @@ I think generated orders should cover all possibilities that could happen.
 This route check the order, base on it's conditions, it may do none, one or some of below things:
     - update order
     - add it to delay reports
-    - add it to delay orders
+    - add it to delay orders.
 Then it will return proper response.
 - Second route is for assigning employee an order which is in delay orders
     - address: 127.0.0.1/api/order/assign (post)
@@ -67,8 +67,8 @@ If employee exists and is not busy with another order, and there is some orders 
         "employee_id": 101
     }
     ```
--Fourth route is for reporting vendors with delayed orders within current week, ordered by vendors with most delay orders to less ones.
-    -address: 127.0.0.1/api/order/report (get)
-    -no input
+- Fourth route is for reporting vendors with delayed orders within current week, ordered by vendors with most delay orders to less ones.
+    - address: 127.0.0.1/api/order/report (get)
+    - no input
 
 Thank you for your time.
