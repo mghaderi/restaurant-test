@@ -34,7 +34,41 @@ I think generated orders should cover all possibilities that could happen.
 - After seeding, there should be 5 employees in users table with ids: [101,102,103,104,105]
 - 4 routes added to this project, that could be called with mentioned order and employee ids.
 ## Routes
-- There is not authentication for any of the routes.
-## License
+- There is no authentication for any of the routes.
+- A postman collection attached to response email, which cantains these routes.
+- Please set Accept header in requsts with "application/json"
+- First route is for submitting a delay in order
+    - address: 127.0.0.1/api/order/delay (post)
+    -input sample: (json)
+    ```
+    {
+        "order_id": 22
+    }
+    ```
+This route check the order, base on it's conditions, it may do none, one or some of below things:
+    - update order
+    - add it to delay reports
+    - add it to delay orders
+Then it will return proper response.
+- Second route is for assigning employee an order which is in delay orders
+    - address: 127.0.0.1/api/order/assign (post)
+    - input sample: (json)
+    ```
+    {
+        "employee_id": 101
+    }
+    ```
+If employee exists and is not busy with another order, and there is some orders in delay orders which no employee has taken yet, it will assign that order to employee and return proper response.
+- Third route is for freeing employee from order and consider order to be resolved (after an order resolved, it could be again added to delay process with first method)
+    - address: 127.0.0.1/api/order/resolve (post)
+    - input sample: (json)
+    ```
+    {
+        "employee_id": 101
+    }
+    ```
+-Fourth route is for reporting vendors with delayed orders within current week, ordered by vendors with most delay orders to less ones.
+    -address: 127.0.0.1/api/order/report (get)
+    -no input
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Thank you for your time.
