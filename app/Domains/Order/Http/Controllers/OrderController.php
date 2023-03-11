@@ -47,13 +47,19 @@ class OrderController
 
     public function resolve(AssignRequest $request)
     {
-        $orderService = new DelayOrderService();
+        $delayOrderService = new DelayOrderService();
         DB::beginTransaction();
-        $order = $orderService->resolveOrderWithEmployee(
+        $order = $delayOrderService->resolveOrderWithEmployee(
             (new UserService())->fetchEmployee($request->input('employee_id'))
         );
         DB::commit();
         $orderService = new OrderService($order->id);
         return (new BasicResponse)->ok($orderService->fetchData());
+    }
+
+    public function report()
+    {
+        $delayReportService = new DelayReportService();
+        return (new BasicResponse)->ok($delayReportService->badVendorsInLastWeek());
     }
 }

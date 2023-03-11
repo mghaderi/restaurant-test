@@ -14,4 +14,6 @@ Route::group(['as' => 'order.', 'prefix' => 'order'], function () {
         ->name('assign');
     Route::post('/resolve', [OrderController::class, 'resolve'])
         ->name('resolve');
+    Route::get('/report', [OrderController::class, 'report'])
+        ->name('report');
 });
